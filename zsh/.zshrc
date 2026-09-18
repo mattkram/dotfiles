@@ -148,7 +148,7 @@ export PATH="$PATH:/Users/mattkram/go/bin"
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # This is hard-coded here for now but should be handled in a cleaner .zsh_profile file
-export PATH=$HOME/dev/.dotfiles/bin:$PATH
+export PATH=$HOME/dev/dotfiles/bin:$PATH
 
 # Load any tokens from another file
 [[ ! -f ~/.tokenrc ]] || source ~/.tokenrc

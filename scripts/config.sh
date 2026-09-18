@@ -18,20 +18,6 @@ CONFIGS=(alacritty nvim)
 
 mkdir -p "$CONFIG_DIR"
 
-for config in "${CONFIGS[@]}"; do
-    target="$CONFIG_DIR/$config"
-    source="$DOTFILES_DIR/$config"
-
-    if [[ -L "$target" ]]; then
-        echo "$config: already linked"
-    elif [[ -e "$target" ]]; then
-        echo "$config: $target exists but is not a symlink, skipping"
-    else
-        ln -s "$source" "$target"
-        echo "$config: linked"
-    fi
-done
-
 link_file() {
     local source="$1"
     local target="$2"
@@ -40,14 +26,26 @@ link_file() {
     mkdir -p "$(dirname "$target")"
 
     if [[ -L "$target" ]]; then
-        echo "$name: already linked"
+        local current
+        current="$(readlink "$target")"
+        if [[ "$current" == "$source" ]]; then
+            echo "$name: already linked"
+            return
+        fi
+        echo "$name: updating symlink ($current -> $source)"
+        rm "$target"
     elif [[ -e "$target" ]]; then
         echo "$name: $target exists but is not a symlink, skipping"
-    else
-        ln -s "$source" "$target"
-        echo "$name: linked"
+        return
     fi
+
+    ln -s "$source" "$target"
+    echo "$name: linked"
 }
+
+for config in "${CONFIGS[@]}"; do
+    link_file "$DOTFILES_DIR/$config" "$CONFIG_DIR/$config" "$config"
+done
 
 copy_file() {
     local source="$1"
